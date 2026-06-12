@@ -36,5 +36,5 @@ def test_duplicate_email_rejected():
     client = _make_client_with_temp_db()
     client.post("/users/", json={"email": "bob@example.com", "full_name": "Bob"})
     resp = client.post("/users/", json={"email": "bob@example.com", "full_name": "Bobby"})
-    assert resp.status_code == 400
+    assert resp.status_code == 409
     assert resp.json()["detail"] == "email already exists"

@@ -1,6 +1,8 @@
 from typing import Optional
 from dataclasses import dataclass
-from .db import get_connection
+import sqlite3
+from app.db import get_connection
+from .errors import UserAlreadyExists, RepositoryError
 
 
 @dataclass
@@ -33,6 +35,11 @@ class SQLiteUserRepository(UserRepository):
             conn.commit()
             user_id = cur.lastrowid
             return UserRecord(id=user_id, email=email, full_name=full_name)
+        except sqlite3.IntegrityError as e:
+            # Unique constraint on email
+            raise UserAlreadyExists("email already exists")
+        except Exception as e:
+            raise RepositoryError(str(e))
         finally:
             conn.close()
 
