@@ -1,0 +1,24 @@
+## Agent template
+# `id`: unique agent id
+# `name`: human-friendly name
+# `description`: short description of purpose
+# `entrypoint`: module:function or command to run the agent
+# `capabilities`: list of high-level capabilities (e.g., code-edit, review, test)
+# `policies`: references to `rule` ids that apply
+
+id: example-agent
+name: Example Agent
+description: "Performs code edits and runs tests for small tasks."
+entrypoint: toolkit.runtime:run_agent
+capabilities:
+  - code-edit
+  - run-tests
+  - review
+policies:
+  - enforce-no-secrets
+  - require-review
+
+# optional config block for agent-specific parameters
+config:
+  max_steps: 5
+  allow_direct_commits: false

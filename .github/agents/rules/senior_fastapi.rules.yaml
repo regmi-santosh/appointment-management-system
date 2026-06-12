@@ -1,0 +1,30 @@
+## Rules for Senior FastAPI Agent
+
+# Block plaintext secrets from being added or committed
+id: senior-fastapi-no-secrets
+description: "Block commits that introduce plaintext secrets or private keys."
+trigger: pre-commit
+condition:
+  type: regex-scan
+  patterns:
+    - "(?i)apikey"
+    - "(?i)password"
+    - "-----BEGIN RSA PRIVATE KEY-----"
+action:
+  on_match: block
+  message: "Potential secret detected — commit blocked."
+
+---
+
+# Require tests for feature or API changes
+id: senior-fastapi-require-tests
+description: "Warn or block changes that modify API surface or business logic without accompanying tests."
+trigger: pre-commit
+condition:
+  type: path-change-scan
+  patterns:
+    - "app/**/*.py"
+    - "features/**/*.feature"
+action:
+  on_match: warn
+  message: "Changes in application code should include unit or BDD tests. Add tests or explain why omitted."
