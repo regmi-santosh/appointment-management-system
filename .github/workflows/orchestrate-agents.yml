@@ -1,0 +1,101 @@
+name: Orchestrate Agents
+
+on:
+  push:
+    paths:
+      - '.github/agents/**'
+      - 'toolkit/skills/**'
+  pull_request:
+    paths:
+      - '.github/agents/**'
+      - 'toolkit/skills/**'
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml yamllint
+
+      - name: Lint agent and skill YAML
+        run: |
+          yamllint .github/agents || true
+          yamllint toolkit/skills || true
+
+      - name: Validate agent references (rules & skills)
+        run: |
+          python - <<'PY'
+import glob,sys,yaml,os,re
+
+def load_frontmatter_md(path):
+    with open(path,'r') as f:
+        text=f.read()
+    m=re.match(r'---\n(.*?)\n---',text,flags=re.S)
+    if m:
+        return yaml.safe_load(m.group(1))
+    return {}
+
+# collect rule ids
+rules=set()
+for f in glob.glob('.github/agents/rules/*', recursive=True):
+    try:
+        with open(f,'r') as fh:
+            docs=list(yaml.safe_load_all(fh))
+            for d in docs:
+                if isinstance(d,dict) and 'id' in d:
+                    rules.add(d['id'])
+    except Exception:
+        pass
+
+# collect skill ids
+skills=set()
+for f in glob.glob('toolkit/skills/**/*.*y*', recursive=True):
+    try:
+        with open(f,'r') as fh:
+            data=yaml.safe_load(fh)
+            if isinstance(data,dict) and 'id' in data:
+                skills.add(data['id'])
+    except Exception:
+        pass
+
+# collect agent files
+agent_files = glob.glob('.github/agents/agents/*', recursive=True) + glob.glob('.github/agents/*.*y*', recursive=True)
+errors=0
+for f in agent_files:
+    try:
+        if f.endswith('.md'):
+            data=load_frontmatter_md(f)
+        else:
+            with open(f,'r') as fh:
+                data=yaml.safe_load(fh)
+        if not data:
+            continue
+        # check policies
+        for p in data.get('policies', []):
+            if p not in rules:
+                print(f'Missing policy "{p}" referenced by {f}')
+                errors += 1
+        # optional: check declared skills if present
+        for s in data.get('skills', []):
+            if s not in skills:
+                print(f'Missing skill "{s}" referenced by {f}')
+                errors += 1
+    except Exception as e:
+        print('Error parsing', f, e)
+        errors += 1
+
+if errors:
+    print('\nAgent orchestration validation failed')
+    sys.exit(1)
+print('Agent orchestration checks passed')
+PY

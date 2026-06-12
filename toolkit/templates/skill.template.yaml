@@ -1,0 +1,20 @@
+## Skill template
+# Skills are reusable capabilities (thin wrappers around tools/actions).
+# `id`, `name`, `description`, `interface` (input/output), `commands` (what the skill can do)
+
+id: apply-patch-skill
+name: Apply Patch Skill
+description: "Apply a source-code patch to the workspace using a safe wrapper."
+interface:
+  inputs:
+    - patch: string
+    - message: string
+  outputs:
+    - result: object
+commands:
+  - name: apply
+    description: "Apply patch using agent runtime's `apply_patch` helper"
+    handler: toolkit.skills.apply_patch:apply
+    permissions:
+      - git-write
+      - filesystem-write

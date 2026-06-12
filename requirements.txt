@@ -1,5 +1,8 @@
+
 fastapi
 uvicorn[standard]
 pytest
-pytest-bdd
+behave
 httpx
+pydantic[email]
+

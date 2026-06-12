@@ -1,0 +1,19 @@
+## Rule template (governance / safety rule)
+# `id`: unique rule id
+# `description`: what the rule enforces
+# `trigger`: when to evaluate (pre-plan, pre-commit, post-action)
+# `condition`: declarative condition or pointer to a callable
+# `action`: enforcement action (warn, block, sanitize, require-review)
+
+id: enforce-no-secrets
+description: "Block commits that introduce plaintext secrets."
+trigger: pre-commit
+condition:
+  type: regex-scan
+  patterns:
+    - "(?i)apikey"
+    - "(?i)password"
+    - "-----BEGIN RSA PRIVATE KEY-----"
+action:
+  on_match: block
+  message: "Potential secret detected — commit blocked."

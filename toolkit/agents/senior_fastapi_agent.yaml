@@ -1,0 +1,16 @@
+id: senior-fastapi-developer
+name: Senior Python/FastAPI Developer
+description: |
+  An expert agent that creates FastAPI projects from high-level requirements.
+entrypoint: toolkit.runtime.runner:AgentRunner
+capabilities:
+  - project-scaffold
+  - code-edit
+  - init-repo
+  - add-tests
+policies:
+  - enforce-no-secrets
+  - require-review
+config:
+  max_steps: 20
+  allow_direct_commits: true

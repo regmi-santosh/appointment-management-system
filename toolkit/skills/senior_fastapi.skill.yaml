@@ -1,0 +1,27 @@
+## Skills for Senior FastAPI Agent
+
+id: senior-fastapi-skillset
+name: Senior FastAPI Skillset
+description: "Common skills for a senior FastAPI agent: apply patches, run tests, lint, and add tests."
+interface:
+  inputs: []
+  outputs: []
+commands:
+  - name: apply-patch
+    description: "Apply a source-code patch to the workspace using the agent runtime."
+    handler: toolkit.skills.apply_patch:apply
+    permissions:
+      - git-write
+      - filesystem-write
+
+  - name: run-tests
+    description: "Run the project's test suite and return results."
+    handler: toolkit.skills.test_runner:run
+    permissions:
+      - run-tests
+
+  - name: lint
+    description: "Run linters and formatters (flake8/ruff/black) if available."
+    handler: toolkit.skills.lint:run
+    permissions:
+      - run-shell
