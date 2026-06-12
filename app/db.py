@@ -26,12 +26,23 @@ def init_db() -> None:
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL UNIQUE,
-            full_name TEXT NOT NULL
+            full_name TEXT NOT NULL,
+            password TEXT
         )
         """
     )
     conn.commit()
-    conn.close()
+
+    # Ensure older databases that lack the `password` column are migrated.
+    try:
+        cur.execute("PRAGMA table_info(users)")
+        rows = cur.fetchall()
+        col_names = [r[1] if not hasattr(r, "keys") else r["name"] for r in rows]
+        if "password" not in col_names:
+            cur.execute("ALTER TABLE users ADD COLUMN password TEXT")
+            conn.commit()
+    finally:
+        conn.close()
 
 
 def iter_conn() -> Iterator[sqlite3.Connection]:

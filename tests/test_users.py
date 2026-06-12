@@ -38,3 +38,20 @@ def test_duplicate_email_rejected():
     resp = client.post("/users/", json={"email": "bob@example.com", "full_name": "Bobby"})
     assert resp.status_code == 409
     assert resp.json()["detail"] == "email already exists"
+
+
+def test_login_with_password():
+    client = _make_client_with_temp_db()
+    # create a user with password
+    resp = client.post(
+        "/users/",
+        json={"email": "carol@example.com", "full_name": "Carol", "password": "s3cr3t"},
+    )
+    assert resp.status_code == 201
+
+    # login with correct credentials
+    resp2 = client.post("/users/login", json={"email": "carol@example.com", "password": "s3cr3t"})
+    assert resp2.status_code == 200
+    data = resp2.json()
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
