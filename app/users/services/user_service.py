@@ -2,6 +2,10 @@ from typing import Optional
 
 from app.users.domain.repository import UserRecord, UserRepository, get_repo
 from app.users.domain.errors import UserAlreadyExists, UserNotFound
+from passlib.context import CryptContext
+
+
+pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
 class UserService:
@@ -16,6 +20,30 @@ class UserService:
         except Exception as e:
             # wrap unexpected repository errors
             raise
+
+    def create_user_with_password(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
+        # hash password if provided using passlib
+        hashed = None
+        if password is not None:
+            hashed = pwd_context.hash(password)
+        try:
+            return self._repo.create(email=email, full_name=full_name, password=hashed)
+        except UserAlreadyExists:
+            raise
+        except Exception:
+            raise
+
+    def authenticate_user(self, email: str, password: str) -> UserRecord:
+        # lookup user by email and compare stored hash
+        user = self._repo.get_by_email(email)
+        if user is None:
+            raise UserNotFound(f"user with email {email} not found")
+        if user.password is None:
+            # user has no password set
+            raise UserNotFound("invalid credentials")
+        if not pwd_context.verify(password, user.password):
+            raise UserNotFound("invalid credentials")
+        return user
 
     def get_user(self, user_id: int) -> Optional[UserRecord]:
         user = self._repo.get(user_id)

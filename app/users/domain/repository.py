@@ -10,13 +10,17 @@ class UserRecord:
     id: int
     email: str
     full_name: str
+    password: Optional[str] = None
 
 
 class UserRepository:
-    def create(self, email: str, full_name: str) -> UserRecord:
+    def create(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
         raise NotImplementedError
 
     def get(self, user_id: int) -> Optional[UserRecord]:
+        raise NotImplementedError
+
+    def get_by_email(self, email: str) -> Optional[UserRecord]:
         raise NotImplementedError
 
 
@@ -25,16 +29,17 @@ class SQLiteUserRepository(UserRepository):
         # ensure DB initialized elsewhere (app startup)
         pass
 
-    def create(self, email: str, full_name: str) -> UserRecord:
+    def create(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
         conn = get_connection()
         cur = conn.cursor()
         try:
             cur.execute(
-                "INSERT INTO users (email, full_name) VALUES (?, ?)", (email, full_name)
+                "INSERT INTO users (email, full_name, password) VALUES (?, ?, ?)",
+                (email, full_name, password),
             )
             conn.commit()
             user_id = cur.lastrowid
-            return UserRecord(id=user_id, email=email, full_name=full_name)
+            return UserRecord(id=user_id, email=email, full_name=full_name, password=password)
         except sqlite3.IntegrityError as e:
             # Unique constraint on email
             raise UserAlreadyExists("email already exists")
@@ -47,11 +52,23 @@ class SQLiteUserRepository(UserRepository):
         conn = get_connection()
         cur = conn.cursor()
         try:
-            cur.execute("SELECT id, email, full_name FROM users WHERE id = ?", (user_id,))
+            cur.execute("SELECT id, email, full_name, password FROM users WHERE id = ?", (user_id,))
             row = cur.fetchone()
             if not row:
                 return None
-            return UserRecord(id=row[0], email=row[1], full_name=row[2])
+            return UserRecord(id=row[0], email=row[1], full_name=row[2], password=row[3])
+        finally:
+            conn.close()
+
+    def get_by_email(self, email: str) -> Optional[UserRecord]:
+        conn = get_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT id, email, full_name, password FROM users WHERE email = ?", (email,))
+            row = cur.fetchone()
+            if not row:
+                return None
+            return UserRecord(id=row[0], email=row[1], full_name=row[2], password=row[3])
         finally:
             conn.close()
 
