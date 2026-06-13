@@ -17,10 +17,12 @@ class UserService:
             return self._repo.create(email=email, full_name=full_name)
         except UserAlreadyExists:
             raise
-        except Exception as e:
+        except Exception:
             raise
 
-    def create_user_with_password(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
+    def create_user_with_password(
+        self, email: str, full_name: str, password: Optional[str] = None
+    ) -> UserRecord:
         hashed = None
         if password is not None:
             hashed = pwd_context.hash(password)

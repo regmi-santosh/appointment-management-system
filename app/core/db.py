@@ -31,6 +31,22 @@ def init_db() -> None:
         )
         """
     )
+    # Create appointments table for appointment domain
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS appointments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            description TEXT,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            owner_id INTEGER NOT NULL,
+            FOREIGN KEY(owner_id) REFERENCES users(id)
+        )
+        """
+    )
+    # index on owner_id for faster owner queries
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_appointments_owner_id ON appointments(owner_id)")
     conn.commit()
 
     # Ensure older databases that lack the `password` column are migrated.

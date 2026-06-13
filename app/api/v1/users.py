@@ -14,7 +14,9 @@ router = APIRouter()
 def create_user(u: UserCreate, svc: UserService = Depends(get_user_service)):
     try:
         # support optional password on create
-        created = svc.create_user_with_password(email=u.email, full_name=u.full_name, password=u.password)
+        created = svc.create_user_with_password(
+            email=u.email, full_name=u.full_name, password=u.password
+        )
     except UserAlreadyExists as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
     except ValueError as e:
@@ -28,7 +30,9 @@ def login(req: LoginRequest, svc: UserService = Depends(get_user_service)):
     try:
         user = svc.authenticate_user(email=req.email, password=req.password)
     except UserNotFound:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid credentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid credentials"
+        )
     token = create_access_token(user_id=user.id)
     return TokenResponse(access_token=token)
 

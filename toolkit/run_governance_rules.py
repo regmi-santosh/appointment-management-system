@@ -1,6 +1,7 @@
-import sys
-import yaml
 import os
+import sys
+
+import yaml
 
 
 def run_rules(path: str):
@@ -14,7 +15,9 @@ def run_rules(path: str):
         if r.get("check") == "env:APP_SECRET":
             val = os.environ.get("APP_SECRET", "")
             if len(val) < 32:
-                findings.append({"id": rid, "severity": r.get("severity"), "message": desc})
+                findings.append(
+                    {"id": rid, "severity": r.get("severity"), "message": desc}
+                )
         # pattern checks could be extended
     return findings
 

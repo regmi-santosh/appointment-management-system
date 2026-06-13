@@ -3,10 +3,9 @@
 import shutil
 import subprocess
 from pathlib import Path
-import sys
 
 TOOLKIT_ROOT = Path(__file__).resolve().parent.parent
-REPORTS = TOOLKIT_ROOT / 'reports'
+REPORTS = TOOLKIT_ROOT / "reports"
 REPORTS.mkdir(exist_ok=True)
 
 
@@ -22,37 +21,37 @@ def main():
     report = []
 
     # pre-commit
-    if shutil.which('pre-commit'):
-        report.append('=== pre-commit ===')
-        report.append(run(['pre-commit', 'run', '--all-files']))
+    if shutil.which("pre-commit"):
+        report.append("=== pre-commit ===")
+        report.append(run(["pre-commit", "run", "--all-files"]))
     else:
-        report.append('pre-commit not available')
+        report.append("pre-commit not available")
 
-    # flake8
-    if shutil.which('flake8'):
-        report.append('=== flake8 ===')
-        report.append(run(['flake8', '.']))
+    # flake8 (exclude venv)
+    if shutil.which("flake8"):
+        report.append("=== flake8 ===")
+        report.append(run(["flake8", ".", "--exclude", ".venv"]))
     else:
-        report.append('flake8 not available')
+        report.append("flake8 not available")
 
-    # mypy
-    if shutil.which('mypy'):
-        report.append('=== mypy ===')
-        report.append(run(['mypy', '.']))
+    # mypy (exclude venv and toolkit runtime file)
+    if shutil.which("mypy"):
+        report.append("=== mypy ===")
+        report.append(run(["mypy", ".", "--exclude", ".venv|toolkit/runtime.py"]))
     else:
-        report.append('mypy not available')
+        report.append("mypy not available")
 
     # pytest
-    if shutil.which('pytest'):
-        report.append('=== pytest ===')
-        report.append(run(['pytest', '-q']))
+    if shutil.which("pytest"):
+        report.append("=== pytest ===")
+        report.append(run(["pytest", "-q"]))
     else:
-        report.append('pytest not available')
+        report.append("pytest not available")
 
-    out_path = REPORTS / 'coding-report.md'
-    out_path.write_text('\n\n'.join(report))
-    print(f'Report written to {out_path}')
+    out_path = REPORTS / "coding-report.md"
+    out_path.write_text("\n\n".join(report))
+    print(f"Report written to {out_path}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

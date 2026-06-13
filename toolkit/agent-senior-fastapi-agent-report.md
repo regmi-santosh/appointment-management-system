@@ -35,4 +35,3 @@ Report written to /Users/sansha/Documents/Projects/Tej Dai/appointment-managemen
 Report written to /Users/sansha/Documents/Projects/Tej Dai/appointment-management-system/toolkit/reports/security-report.md
 
 ```
-
