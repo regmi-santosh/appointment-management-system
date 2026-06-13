@@ -1,8 +1,8 @@
 from typing import Optional
 from dataclasses import dataclass
 import sqlite3
-from app.db import get_connection
-from .errors import UserAlreadyExists, RepositoryError
+from app.core.db import get_connection
+from app.users.errors import UserAlreadyExists, RepositoryError
 
 
 @dataclass
@@ -26,7 +26,6 @@ class UserRepository:
 
 class SQLiteUserRepository(UserRepository):
     def __init__(self):
-        # ensure DB initialized elsewhere (app startup)
         pass
 
     def create(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
@@ -40,8 +39,7 @@ class SQLiteUserRepository(UserRepository):
             conn.commit()
             user_id = cur.lastrowid
             return UserRecord(id=user_id, email=email, full_name=full_name, password=password)
-        except sqlite3.IntegrityError as e:
-            # Unique constraint on email
+        except sqlite3.IntegrityError:
             raise UserAlreadyExists("email already exists")
         except Exception as e:
             raise RepositoryError(str(e))
@@ -74,5 +72,4 @@ class SQLiteUserRepository(UserRepository):
 
 
 def get_repo() -> SQLiteUserRepository:
-    # return a fresh repository instance; callers (FastAPI) can manage lifetime
     return SQLiteUserRepository()
