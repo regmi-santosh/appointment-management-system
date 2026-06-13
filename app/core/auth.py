@@ -15,7 +15,6 @@ def _secret() -> str:
 def create_access_token(user_id: int, expires_in: int = 3600) -> str:
     payload = {"uid": user_id, "exp": int(time.time()) + expires_in}
     token = jwt.encode(payload, _secret(), algorithm="HS256")
-    # PyJWT may return bytes in older versions
     if isinstance(token, bytes):
         return token.decode("utf-8")
     return token

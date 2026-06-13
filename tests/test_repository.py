@@ -1,8 +1,8 @@
 import os
 import tempfile
 
-from app.db import init_db
-from app.users.domain.repository import SQLiteUserRepository
+from app.core.db import init_db
+from app.users.repository import SQLiteUserRepository
 
 
 def test_repository_create_and_get():

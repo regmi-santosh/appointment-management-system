@@ -1,11 +1,19 @@
-"""Users domain package (domain-driven structure).
+"""Users package exports.
 
-This package contains user-related domain models, repository adapters,
-services, and API routers.
+Expose the consolidated user modules for easier imports.
 """
 
+from .repository import UserRecord, SQLiteUserRepository, get_repo
+from .service import UserService, get_user_service
+from . import schemas
+from . import errors
+
 __all__ = [
-    "domain",
-    "services",
-    "api",
+    "UserRecord",
+    "SQLiteUserRepository",
+    "get_repo",
+    "UserService",
+    "get_user_service",
+    "schemas",
+    "errors",
 ]

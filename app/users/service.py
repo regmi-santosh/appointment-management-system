@@ -1,7 +1,7 @@
 from typing import Optional
 
-from app.users.domain.repository import UserRecord, UserRepository, get_repo
-from app.users.domain.errors import UserAlreadyExists, UserNotFound
+from app.users.repository import UserRecord, UserRepository, get_repo
+from app.users.errors import UserAlreadyExists, UserNotFound
 from passlib.context import CryptContext
 
 
@@ -18,11 +18,9 @@ class UserService:
         except UserAlreadyExists:
             raise
         except Exception as e:
-            # wrap unexpected repository errors
             raise
 
     def create_user_with_password(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
-        # hash password if provided using passlib
         hashed = None
         if password is not None:
             hashed = pwd_context.hash(password)
@@ -34,12 +32,10 @@ class UserService:
             raise
 
     def authenticate_user(self, email: str, password: str) -> UserRecord:
-        # lookup user by email and compare stored hash
         user = self._repo.get_by_email(email)
         if user is None:
             raise UserNotFound(f"user with email {email} not found")
         if user.password is None:
-            # user has no password set
             raise UserNotFound("invalid credentials")
         if not pwd_context.verify(password, user.password):
             raise UserNotFound("invalid credentials")
@@ -48,7 +44,7 @@ class UserService:
     def get_user(self, user_id: int) -> Optional[UserRecord]:
         user = self._repo.get(user_id)
         if user is None:
-            from app.users.domain.errors import UserNotFound
+            from app.users.errors import UserNotFound
 
             raise UserNotFound(f"user {user_id} not found")
         return user

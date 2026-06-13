@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.users.schemas import UserCreate, User as UserSchema, LoginRequest, TokenResponse
-from app.users.services import UserService, get_user_service
-from app.auth import create_access_token
-from app.users.domain.errors import UserAlreadyExists, UserNotFound
+from app.users.service import UserService, get_user_service
+from app.core.auth import create_access_token
+from app.users.errors import UserAlreadyExists, UserNotFound
 
 router = APIRouter()
 
@@ -19,7 +19,6 @@ def create_user(u: UserCreate, svc: UserService = Depends(get_user_service)):
         # business validation error
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     return UserSchema(id=created.id, email=created.email, full_name=created.full_name)
-
 
 
 @router.post("/login", response_model=TokenResponse)

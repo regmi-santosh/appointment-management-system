@@ -10,7 +10,7 @@ def _make_client_with_temp_db():
     os.environ["DB_PATH"] = tmp.name
     # reload app module so startup uses the new DB_PATH
     # ensure DB is initialized for the temp path
-    import app.db as dbmod
+    import app.core.db as dbmod
 
     dbmod.init_db()
     import app.main as appmod

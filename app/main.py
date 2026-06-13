@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from pathlib import Path
-from .users import api as api_users
-from . import db
+from app.api.v1.users import router as users_router
+from app.core import db
 from fastapi.responses import JSONResponse
-from app.users.domain.errors import UserAlreadyExists, UserNotFound
-from app.users.domain.errors import RepositoryError
+from app.users.errors import UserAlreadyExists, UserNotFound
+from app.users.errors import RepositoryError
 
 # Load OpenAPI description from file when available so the API docs are richer
 desc_path = Path(__file__).parent / "openapi_description.md"
@@ -40,7 +40,7 @@ def handle_repo_error(request, exc: RepositoryError):
 
 
 # Mount canonical router namespace for versioned API
-app.include_router(api_users.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(users_router, prefix="/api/v1/users", tags=["users"])
 
 # Keep `/users` as a lightweight redirect to the canonical, versioned API
 # Hide these helper redirect routes from the OpenAPI schema (docs)
