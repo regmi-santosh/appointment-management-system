@@ -15,7 +15,9 @@ class UserRecord:
 
 
 class UserRepository:
-    def create(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
+    def create(
+        self, email: str, full_name: str, password: Optional[str] = None
+    ) -> UserRecord:
         raise NotImplementedError
 
     def get(self, user_id: int) -> Optional[UserRecord]:
@@ -29,7 +31,9 @@ class SQLiteUserRepository(UserRepository):
     def __init__(self):
         pass
 
-    def create(self, email: str, full_name: str, password: Optional[str] = None) -> UserRecord:
+    def create(
+        self, email: str, full_name: str, password: Optional[str] = None
+    ) -> UserRecord:
         conn = get_connection()
         cur = conn.cursor()
         try:
@@ -39,7 +43,9 @@ class SQLiteUserRepository(UserRepository):
             )
             conn.commit()
             user_id = cur.lastrowid
-            return UserRecord(id=user_id, email=email, full_name=full_name, password=password)
+            return UserRecord(
+                id=user_id, email=email, full_name=full_name, password=password
+            )
         except sqlite3.IntegrityError:
             raise UserAlreadyExists("email already exists")
         except Exception as e:
@@ -51,11 +57,16 @@ class SQLiteUserRepository(UserRepository):
         conn = get_connection()
         cur = conn.cursor()
         try:
-            cur.execute("SELECT id, email, full_name, password FROM users WHERE id = ?", (user_id,))
+            cur.execute(
+                "SELECT id, email, full_name, password FROM users WHERE id = ?",
+                (user_id,),
+            )
             row = cur.fetchone()
             if not row:
                 return None
-            return UserRecord(id=row[0], email=row[1], full_name=row[2], password=row[3])
+            return UserRecord(
+                id=row[0], email=row[1], full_name=row[2], password=row[3]
+            )
         finally:
             conn.close()
 
@@ -63,11 +74,16 @@ class SQLiteUserRepository(UserRepository):
         conn = get_connection()
         cur = conn.cursor()
         try:
-            cur.execute("SELECT id, email, full_name, password FROM users WHERE email = ?", (email,))
+            cur.execute(
+                "SELECT id, email, full_name, password FROM users WHERE email = ?",
+                (email,),
+            )
             row = cur.fetchone()
             if not row:
                 return None
-            return UserRecord(id=row[0], email=row[1], full_name=row[2], password=row[3])
+            return UserRecord(
+                id=row[0], email=row[1], full_name=row[2], password=row[3]
+            )
         finally:
             conn.close()
 

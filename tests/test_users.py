@@ -21,7 +21,9 @@ def _make_client_with_temp_db():
 
 def test_create_and_get_user():
     client = _make_client_with_temp_db()
-    resp = client.post("/users/", json={"email": "alice@example.com", "full_name": "Alice"})
+    resp = client.post(
+        "/users/", json={"email": "alice@example.com", "full_name": "Alice"}
+    )
     assert resp.status_code == 201
     data = resp.json()
     assert data["id"] == 1
@@ -35,7 +37,9 @@ def test_create_and_get_user():
 def test_duplicate_email_rejected():
     client = _make_client_with_temp_db()
     client.post("/users/", json={"email": "bob@example.com", "full_name": "Bob"})
-    resp = client.post("/users/", json={"email": "bob@example.com", "full_name": "Bobby"})
+    resp = client.post(
+        "/users/", json={"email": "bob@example.com", "full_name": "Bobby"}
+    )
     assert resp.status_code == 409
     assert resp.json()["detail"] == "email already exists"
 
@@ -50,7 +54,9 @@ def test_login_with_password():
     assert resp.status_code == 201
 
     # login with correct credentials
-    resp2 = client.post("/users/login", json={"email": "carol@example.com", "password": "s3cr3t"})
+    resp2 = client.post(
+        "/users/login", json={"email": "carol@example.com", "password": "s3cr3t"}
+    )
     assert resp2.status_code == 200
     data = resp2.json()
     assert "access_token" in data
