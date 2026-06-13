@@ -1,0 +1,17 @@
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel
+
+router = APIRouter()
+
+class {{ model_name }}(BaseModel):
+    id: int
+    # add fields
+
+
+@router.get("{{ router_path }}")
+def list_{{ module_name }}():
+    return []
+
+@router.post("{{ router_path }}")
+def create_{{ module_name }}(payload: {{ model_name }}):
+    return payload

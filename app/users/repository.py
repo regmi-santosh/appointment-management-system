@@ -1,8 +1,9 @@
-from typing import Optional
-from dataclasses import dataclass
 import sqlite3
+from dataclasses import dataclass
+from typing import Optional
+
 from app.core.db import get_connection
-from app.users.errors import UserAlreadyExists, RepositoryError
+from app.users.errors import RepositoryError, UserAlreadyExists
 
 
 @dataclass

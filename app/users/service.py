@@ -1,9 +1,9 @@
 from typing import Optional
 
-from app.users.repository import UserRecord, UserRepository, get_repo
-from app.users.errors import UserAlreadyExists, UserNotFound
 from passlib.context import CryptContext
 
+from app.users.errors import UserAlreadyExists, UserNotFound
+from app.users.repository import UserRecord, UserRepository, get_repo
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 

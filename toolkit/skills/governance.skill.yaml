@@ -1,0 +1,19 @@
+name: governance
+description: Governance skill to run architecture, security, and style checks and summarise results.
+version: 0.1.0
+checks:
+  - name: lint
+    tool: ruff
+    args: ["."]
+  - name: tests
+    tool: pytest
+    args: ["-q"]
+  - name: security-scan
+    tool: bandit
+    args: ["-r", "app/"]
+  - name: rules
+    tool: custom
+    rules_file: toolkit/rules/governance.rules.yaml
+
+outputs:
+  - governance-report.md

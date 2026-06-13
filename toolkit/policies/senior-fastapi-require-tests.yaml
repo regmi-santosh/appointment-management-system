@@ -1,0 +1,6 @@
+id: senior-fastapi-require-tests
+description: Ensure changes include tests and all tests pass.
+required_skills:
+  - coding-standards
+required_rules:
+  - REQUIRE_TESTS

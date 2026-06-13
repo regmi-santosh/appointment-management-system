@@ -1,5 +1,6 @@
-from behave import given, when, then
+from behave import given, then, when
 from fastapi.testclient import TestClient
+
 from app.main import app
 
 

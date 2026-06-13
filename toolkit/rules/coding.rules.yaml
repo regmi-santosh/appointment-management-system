@@ -1,0 +1,18 @@
+rules:
+  - id: PRE_COMMIT_PRESENT
+    severity: MEDIUM
+    description: Ensure `.pre-commit-config.yaml` exists
+    check: "files.exists('.pre-commit-config.yaml')"
+    message: "Add .pre-commit-config.yaml with black/isort/flake8/mypy hooks."
+
+  - id: CODE_STYLE_DOC
+    severity: LOW
+    description: Ensure `CODE_STYLE.md` exists
+    check: "files.exists('CODE_STYLE.md')"
+    message: "Add CODE_STYLE.md describing formatting, imports, and typing rules."
+
+  - id: CI_PRESENT
+    severity: MEDIUM
+    description: Ensure CI workflow exists for linting and tests
+    check: "files.exists('.github/workflows/ci.yml')"
+    message: "Add a CI workflow to run linters and tests on PRs."

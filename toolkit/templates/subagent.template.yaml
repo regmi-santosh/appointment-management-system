@@ -3,7 +3,7 @@
 
 id: example-subagent
 name: Example Subagent
-description: "Focused worker for code formatting and linting." 
+description: "Focused worker for code formatting and linting."
 entrypoint: toolkit.runtime:run_subagent
 capabilities:
   - lint

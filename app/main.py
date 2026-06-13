@@ -1,11 +1,11 @@
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
 from pathlib import Path
+
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse, RedirectResponse
+
 from app.api.v1.users import router as users_router
 from app.core import db
-from fastapi.responses import JSONResponse
-from app.users.errors import UserAlreadyExists, UserNotFound
-from app.users.errors import RepositoryError
+from app.users.errors import RepositoryError, UserAlreadyExists, UserNotFound
 
 # Load OpenAPI description from file when available so the API docs are richer
 desc_path = Path(__file__).parent / "openapi_description.md"

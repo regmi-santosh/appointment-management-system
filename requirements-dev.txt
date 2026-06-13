@@ -1,0 +1,7 @@
+pre-commit
+flake8
+mypy
+bandit
+pip-audit
+safety
+pytest
