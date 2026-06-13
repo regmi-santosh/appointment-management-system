@@ -1,0 +1,20 @@
+rules:
+  - id: architecture-layering
+    description: "Enforce core/, api/v1/, and domain packages for new modules"
+    pattern: "app/(api|core|<domain>)/"
+    severity: warning
+
+  - id: no-top-level-business-logic
+    description: "Avoid putting domain/business logic directly under app/main.py or top-level modules"
+    pattern: "app/main.py"
+    severity: warning
+
+  - id: security-secret-length
+    description: "Require APP_SECRET to be at least 32 bytes in production"
+    check: "env:APP_SECRET"
+    severity: error
+
+  - id: password-hashing
+    description: "Ensure passlib or secure hashing is used for passwords. Reject raw SHA256 usage"
+    pattern: "sha256"
+    severity: error

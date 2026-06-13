@@ -1,0 +1,20 @@
+name: security
+description: Security skill to run static and dependency checks and summarize high-risk findings.
+version: 0.1.0
+checks:
+  - name: bandit
+    tool: bandit
+    args: ["-r", "app/"]
+  - name: pip-audit
+    tool: pip-audit
+    args: ["--progress", "off"]
+  - name: safety
+    tool: safety
+    args: ["check", "--full-report"]
+  - name: custom-rules
+    tool: custom
+    rules_file: toolkit/rules/security.rules.yaml
+
+outputs:
+  - security-report.md
+runner: runners/run_security_checks.py

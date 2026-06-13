@@ -113,6 +113,50 @@ Developer notes
 - Env: set `DB_PATH` to change the SQLite file and `APP_SECRET` to a production secret.
 - Adding modules: add domain modules under `app/` and register routers under `app/api/v1`.
 
+**Contribution**
+
+- **Docs**: See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute and open PRs.
+- **Style**: Follow the guidelines in [CODE_STYLE.md](CODE_STYLE.md).
+
+**Coding Standards**
+
+- **Formatters & linters**: This project uses Black, isort, flake8 and mypy. Pre-commit hooks are configured in [.pre-commit-config.yaml](.pre-commit-config.yaml).
+- **Dev deps**: Install development tooling from [requirements-dev.txt](requirements-dev.txt).
+
+**Toolkit & Governance**
+
+- The repository includes a lightweight governance toolkit under [toolkit/](toolkit/). Key artifacts:
+	- Agent descriptions: [toolkit/agents/](toolkit/agents/)
+	- Skills, policies, rules: [toolkit/skills/](toolkit/skills/), [toolkit/policies/](toolkit/policies/), [toolkit/rules/](toolkit/rules/)
+	- Runners: [toolkit/runners/](toolkit/runners/)
+	- Orchestrator: [toolkit/runtime.py](toolkit/runtime.py)
+	- Reports: [toolkit/reports/](toolkit/reports/)
+
+**Run governance checks (local)**
+
+1. Activate the project virtualenv:
+
+```bash
+. .venv/bin/activate
+```
+
+2. Install dev tools:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+3. Run the coordinator to execute all checks and produce reports:
+
+```bash
+python toolkit/runners/run_agents.py
+# or run a single agent via the runtime:
+python toolkit/runtime.py toolkit/agents/senior_fastapi.agent.md
+```
+
+Reports are written to the [toolkit/reports/](toolkit/reports/) directory. CI also uploads the governance report on PRs via [.github/workflows/governance.yml](.github/workflows/governance.yml).
+
+
 
 Notes
 -----

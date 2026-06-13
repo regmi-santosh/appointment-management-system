@@ -7,4 +7,3 @@ httpx
 pydantic[email]
 passlib[bcrypt]
 PyJWT
-

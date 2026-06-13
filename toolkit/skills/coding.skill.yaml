@@ -1,0 +1,21 @@
+name: coding-standards
+description: Run formatting, linting, typing, and repository coding rules.
+version: 0.1.0
+checks:
+  - name: pre-commit
+    tool: pre-commit
+    args: ["run", "--all-files"]
+  - name: flake8
+    tool: flake8
+    args: ["."]
+  - name: mypy
+    tool: mypy
+    args: ["."]
+  - name: pytest
+    tool: pytest
+    args: ["-q"]
+runner: runners/run_coding_checks.py
+outputs:
+  - coding-report.md
+outputs:
+  - coding-report.md

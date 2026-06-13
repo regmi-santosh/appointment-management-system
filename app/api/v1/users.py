@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.users.schemas import UserCreate, User as UserSchema, LoginRequest, TokenResponse
-from app.users.service import UserService, get_user_service
 from app.core.auth import create_access_token
 from app.users.errors import UserAlreadyExists, UserNotFound
+from app.users.schemas import LoginRequest, TokenResponse
+from app.users.schemas import User as UserSchema
+from app.users.schemas import UserCreate
+from app.users.service import UserService, get_user_service
 
 router = APIRouter()
 

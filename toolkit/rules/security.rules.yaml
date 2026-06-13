@@ -1,0 +1,54 @@
+rules:
+  - id: APP_SECRET_LENGTH
+    severity: HIGH
+    description: Application secret should be at least 32 characters.
+    check: "env.APP_SECRET and len(env.APP_SECRET) >= 32"
+    message: "Set APP_SECRET to a secure value of at least 32 characters."
+
+  - id: NO_HARDCODED_SECRETS
+    severity: HIGH
+    description: Secrets must not be hard-coded in source files.
+    check: "scan.files_for_secret_patterns(['PASSWORD', 'SECRET', 'API_KEY'])"
+    message: "Remove hard-coded secrets and load them from environment or secret manager."
+
+  - id: WEAK_PASSWORD_HASH
+    severity: MEDIUM
+    description: Avoid using plain sha256 or md5 for password hashing.
+    check: "not scan.uses_weak_hashing()"
+    message: "Use passlib or bcrypt/pbkdf2 with proper parameters for password hashing."
+
+  - id: JWT_LONG_EXPIRY
+    severity: MEDIUM
+    description: Tokens should have reasonable expiry times.
+    check: "config.get('JWT_EXPIRATION_SECONDS', 3600) <= 86400"
+    message: "Set short token lifetimes and consider refresh token flow."
+
+  - id: DEPENDENCY_VULNERABILITIES
+    severity: HIGH
+    description: Dependencies must be audited for known vulnerabilities.
+    check: "pip_audit.has_vulnerabilities()"
+    message: "Run `pip-audit` and address reported vulnerabilities."
+rules:
+  - id: app-secret-length
+    description: "APP_SECRET must be set and at least 32 characters in production"
+    check: "env:APP_SECRET"
+    severity: error
+
+  - id: no-hardcoded-secrets
+    description: "Disallow hard-coded secrets (look for 'SECRET', 'TOKEN', 'PASSWORD' in code)"
+    pattern: "SECRET|TOKEN|PASSWORD"
+    severity: error
+
+  - id: password-hashing-best-practice
+    description: "Ensure secure password hashing libraries are used (bcrypt/passlib/pbkdf2). Reject raw sha256 usage for password hashing."
+    pattern: "sha256"
+    severity: error
+
+  - id: token-expiry
+    description: "Require token creation code to set an expiration claim"
+    pattern: "exp\"|\"exp\""
+    severity: warning
+
+  - id: dependency-audit
+    description: "Run dependency vulnerability scanner (pip-audit/safety) in CI"
+    severity: warning
